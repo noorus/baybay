@@ -9,25 +9,40 @@ define(function()
     this.tag = tag;
     this.close = close;
   }
-  BBTagInstance.prototype.render = function()
+  BBTagInstance.prototype.render = function( capture )
   {
-    return this.tag.render( this.close );
+    return this.tag.render( this.close, capture );
   };
   function BBSimpleTag( tag )
   {
     this.tag = tag;
-    this.render = function( close )
+    this.capture = false;
+    this.render = function( close, capture )
     {
-      return "<" + ( close ? "/" : "" ) + this.tag ">";
+      return "<" + ( close ? "/" : "" ) + this.tag + ">";
+    };
+  }
+  function BBImageTag()
+  {
+    this.tag = "img";
+    this.capture = true;
+    this.render = function( close, capture )
+    {
+      if ( !close )
+        return "";
+      // TODO: Clean up in case of nasties
+      return "<img src=\"" + capture + "\">";
     };
   }
   function BBCode()
   {
     this._stack = [];
+    this._capture = null;
     this._tags = [
       new BBSimpleTag( "b" ),
       new BBSimpleTag( "i" ),
-      new BBSimpleTag( "u" )
+      new BBSimpleTag( "u" ),
+      new BBImageTag()
     ];
   }
   BBCode.prototype.parseTag = function( content )
@@ -62,7 +77,10 @@ define(function()
         if ( close < 0 || ( next >= 0 && next < close ) )
         {
           // You don't often wish for goto in a language, but I guess this is one of those times
-          parsed += content[i];
+          if ( this._capture !== null )
+            this._capture += content[i];
+          else
+            parsed += content[i];
           i++;
           continue;
         }
@@ -72,26 +90,42 @@ define(function()
           var instance = this.parseTag( sub );
           if ( instance !== null )
           {
-            if ( !instance.close ) {
-              this._stack.push( instance );
-            } else
+            if ( !instance.close && this._capture === null )
             {
-              if ( this._stack.length < 1 ) {
-                parsed += content[i];
+              this._stack.push( instance );
+              if ( instance.tag.capture )
+                this._capture = "";
+            }
+            else
+            {
+              var match = ( this._stack.length < 1 || this._stack[this._stack.length-1].tag.tag == instance.tag.tag );
+              if ( !match )
+              {
+                if ( this._capture !== null )
+                  this._capture += content[i];
+                else
+                {
+                  if ( this._stack.length > 0 )
+                    throw new BBCodeParseError( "Mismatched tags" );
+                  parsed += content[i];
+                }
                 i++;
                 continue;
               }
-              if ( this._stack[this._stack.length-1].tag.tag != instance.tag.tag )
-                throw new BBCodeParseError( "Mismatched tags" );
               this._stack.pop();
             }
-            parsed += instance.render();
+            parsed += instance.render( this._capture );
+            if ( instance.close )
+              this._capture = null;
             i += sub.length + 2;
             continue;
           }
         }
       }
-      parsed += content[i];
+      if ( this._capture !== null )
+        this._capture += content[i];
+      else
+        parsed += content[i];
       i++;
     }
     if ( this._stack.length > 0 )
@@ -100,7 +134,8 @@ define(function()
       {
         var instance = this._stack[i];
         instance.close = true;
-        parsed += instance.render();
+        parsed += instance.render( this._capture );
+        this._capture = null;
       }
     }
     return parsed;
