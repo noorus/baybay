@@ -4,20 +4,21 @@ define(function()
   {
     this.message = message;
   }
-  function BBTagInstance( tag, close )
+  function BBTagInstance( tag, close, arguments )
   {
     this.tag = tag;
     this.close = close;
+    this.args = arguments;
   }
   BBTagInstance.prototype.render = function( capture )
   {
-    return this.tag.render( this.close, capture );
+    return this.tag.render( this.close, capture, this.args );
   };
   function BBSimpleTag( tag )
   {
     this.tag = tag;
     this.capture = false;
-    this.render = function( close, capture )
+    this.render = function( close, capture, arguments )
     {
       return "<" + ( close ? "/" : "" ) + this.tag + ">";
     };
@@ -26,13 +27,29 @@ define(function()
   {
     this.tag = "img";
     this.capture = true;
-    this.render = function( close, capture )
+    this.render = function( close, capture, arguments )
     {
       if ( !close )
         return "";
       // TODO: Clean up in case of nasties
       return "<img src=\"" + capture + "\">";
     };
+  }
+  function BBColorTag()
+  {
+    this.tag = "color";
+    this.capture = false;
+    this.render = function( close, capture, arguments )
+    {
+      // TODO: Allow returning null in render, in case the arguments are invalid
+      if ( close )
+        return "</span>";
+      if ( !arguments[0] || !arguments[0][1] )
+        return "<span>";
+      // TODO: Validate and clean up in case of nasties
+      var color = arguments[0][1];
+      return "<span style=\"color: " + color + ";\">";
+    }
   }
   function BBCode()
   {
@@ -42,22 +59,36 @@ define(function()
       new BBSimpleTag( "b" ),
       new BBSimpleTag( "i" ),
       new BBSimpleTag( "u" ),
-      new BBImageTag()
+      new BBImageTag(),
+      new BBColorTag()
     ];
   }
+  BBCode.prototype.trim = function( str )
+  {
+    // String.trim does not exist in IE8 or Safari 4
+    if ( typeof String.prototype.trim == "function" )
+      return str.trim();
+    else
+      return str.replace( /^\s+|\s+$/g, "" );
+  };
   BBCode.prototype.parseTag = function( content )
   {
     if ( !content )
       return null;
+    content = this.trim( content );
     var close = ( content[0] == "/" );
     if ( close )
       content = content.substr( 1 );
-    content = content.split( "=" );
+    content = content.split( " " );
+    for ( var i = 0; i < content.length; i++ )
+      content[i] = ( this.trim( content[i] ) ).split( "=" );
+    if ( !content[0] || !content[0][0] )
+      return null;
     for ( var i = 0; i < this._tags.length; i++ )
     {
-      if ( this._tags[i].tag == content[0] )
+      if ( this._tags[i].tag == content[0][0] )
       {
-        var tag = new BBTagInstance( this._tags[i], close );
+        var tag = new BBTagInstance( this._tags[i], close, content );
         return tag;
       }
     }
@@ -128,15 +159,12 @@ define(function()
         parsed += content[i];
       i++;
     }
-    if ( this._stack.length > 0 )
+    while ( this._stack.length > 0 )
     {
-      for ( i = this._stack.length - 1; i >= 0; i-- )
-      {
-        var instance = this._stack[i];
+        var instance = this._stack.pop();
         instance.close = true;
         parsed += instance.render( this._capture );
         this._capture = null;
-      }
     }
     return parsed;
   };
