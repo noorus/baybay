@@ -182,10 +182,10 @@ define(function()
     }
     while ( this._stack.length > 0 )
     {
-        var instance = this._stack.pop();
-        instance.close = true;
-        parsed += instance.render( this._capture );
-        this._capture = null;
+      var instance = this._stack.pop();
+      instance.close = true;
+      parsed += instance.render( this._capture );
+      this._capture = null;
     }
     return parsed;
   };
