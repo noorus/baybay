@@ -66,11 +66,11 @@ define(function()
     this._stack = [];
     this._capture = null;
     this._tags = [
-      new BBSimpleTag( "b" ), // Enables the [b] tag for bolding
-      new BBSimpleTag( "i" ), // Enables the [i] tag for italics
-      new BBSimpleTag( "u" ), // Enabled the [u] tag for underlining
-      new BBImageTag(), // Enables the [img] tag for image linking
-      new BBColorTag()  // Enables the [color] tag for text coloring
+      new BBSimpleTag( this, "b" ), // Enables the [b] tag for bolding
+      new BBSimpleTag( this, "i" ), // Enables the [i] tag for italics
+      new BBSimpleTag( this, "u" ), // Enabled the [u] tag for underlining
+      new BBImageTag( this ), // Enables the [img] tag for image linking
+      new BBColorTag( this )  // Enables the [color] tag for text coloring
     ];
   }
   BBCode.prototype.sanitizeURLArgument = function( url )
