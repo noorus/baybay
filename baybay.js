@@ -1,3 +1,8 @@
+/*
+ * Baybay.js
+ * https://github.com/noorus/baybay
+ * Licensed under the MIT license.
+*/
 define(function()
 {
   function BBCodeParseError( message )
@@ -14,8 +19,9 @@ define(function()
   {
     return this.tag.render( this.close, capture, this.args );
   };
-  function BBSimpleTag( tag )
+  function BBSimpleTag( bb, tag )
   {
+    this._bb = bb;
     this.tag = tag;
     this.capture = false;
     this.render = function( close, capture, arguments )
@@ -23,20 +29,24 @@ define(function()
       return "<" + ( close ? "/" : "" ) + this.tag + ">";
     };
   }
-  function BBImageTag()
+  function BBImageTag( bb )
   {
+    this._bb = bb;
     this.tag = "img";
     this.capture = true;
     this.render = function( close, capture, arguments )
     {
       if ( !close )
         return "";
-      // TODO: Clean up in case of nasties
+      capture = this._bb.sanitizeURLArgument( capture );
+      if ( !capture )
+        return "";
       return "<img src=\"" + capture + "\">";
     };
   }
-  function BBColorTag()
+  function BBColorTag( bb )
   {
+    this._bb = bb;
     this.tag = "color";
     this.capture = false;
     this.render = function( close, capture, arguments )
@@ -56,13 +66,24 @@ define(function()
     this._stack = [];
     this._capture = null;
     this._tags = [
-      new BBSimpleTag( "b" ),
-      new BBSimpleTag( "i" ),
-      new BBSimpleTag( "u" ),
-      new BBImageTag(),
-      new BBColorTag()
+      new BBSimpleTag( "b" ), // Enables the [b] tag for bolding
+      new BBSimpleTag( "i" ), // Enables the [i] tag for italics
+      new BBSimpleTag( "u" ), // Enabled the [u] tag for underlining
+      new BBImageTag(), // Enables the [img] tag for image linking
+      new BBColorTag()  // Enables the [color] tag for text coloring
     ];
   }
+  BBCode.prototype.sanitizeURLArgument = function( url )
+  {
+    try {
+      url = this.trim( url );
+      url = encodeURI( url );
+      url = url.replace( /%5B/g, "[" ).replace( /%5D/g, "]" );
+      return url;
+    } catch ( e ) {
+      return null;
+    }
+  };
   BBCode.prototype.trim = function( str )
   {
     // String.trim does not exist in IE8 or Safari 4

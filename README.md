@@ -6,8 +6,7 @@ baybay(ˈbeɪbeɪ)
 ### Why..?
 
 Well, honestly, because all the other parsers I looked at were kinda bad.  
-You don't need 1500 lines for a BBCode parser. You just *don't*.  
-And neither do you need regexp. That's just not cool.
+You don't need 1500 lines for a BBCode parser. You just *don't*.
 
 So here we are. One loop, a stack and a couple string utils.
 
