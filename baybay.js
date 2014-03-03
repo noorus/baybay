@@ -51,13 +51,13 @@ define(function()
     this.capture = false;
     this.render = function( close, capture, arguments )
     {
-      // TODO: Allow returning null in render, in case the arguments are invalid
       if ( close )
         return "</span>";
       if ( !arguments[0] || !arguments[0][1] )
         return "<span>";
-      // TODO: Validate and clean up in case of nasties
-      var color = arguments[0][1];
+      var color = this._bb.sanitizeColorArgument( arguments[0][1] );
+      if ( !color )
+        return "<span>";
       return "<span style=\"color: " + color + ";\">";
     }
   }
@@ -66,13 +66,33 @@ define(function()
     this._stack = [];
     this._capture = null;
     this._tags = [
-      new BBSimpleTag( this, "b" ), // Enables the [b] tag for bolding
-      new BBSimpleTag( this, "i" ), // Enables the [i] tag for italics
-      new BBSimpleTag( this, "u" ), // Enabled the [u] tag for underlining
-      new BBImageTag( this ), // Enables the [img] tag for image linking
-      new BBColorTag( this )  // Enables the [color] tag for text coloring
+      // Enables the [b] tag for bolding
+      new BBSimpleTag( this, "b" ),
+      // Enables the [i] tag for italics
+      new BBSimpleTag( this, "i" ),
+      // Enabled the [u] tag for underlining
+      new BBSimpleTag( this, "u" ),
+      // Enables the [img] tag for image linking
+      new BBImageTag( this ),
+      // Enables the [color] tag for text coloring
+      new BBColorTag( this )
     ];
   }
+  BBCode.prototype.sanitizeColorArgument = function( color )
+  {
+    color = this.trim( color ).toLowerCase();
+    if ( /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i.test( color ) )
+      return color;
+    // http://www.w3.org/TR/CSS21/syndata.html#color-units
+    var colors = [
+      "white", "silver", "gray", "black", "red", "maroon",
+      "yellow", "olive", "lime", "green", "aqua", "teal",
+      "blue", "navy", "fuchsia", "purple", "orange"
+    ];
+    if ( this.inArray( colors, color ) )
+      return color;
+    return null;
+  };
   BBCode.prototype.sanitizeURLArgument = function( url )
   {
     try {
@@ -84,10 +104,23 @@ define(function()
       return null;
     }
   };
+  BBCode.prototype.inArray = function( arr, needle )
+  {
+    // Array.indexOf does not exist in IE8
+    if ( Array.prototype.indexOf )
+      return ( arr.indexOf( needle ) != -1 );
+    else
+    {
+      for ( var i = 0; var len = arr.length; i < len; i++ )
+        if ( arr[i] == needle )
+          return true;
+      return false;
+    }
+  };
   BBCode.prototype.trim = function( str )
   {
     // String.trim does not exist in IE8 or Safari 4
-    if ( typeof String.prototype.trim == "function" )
+    if ( String.prototype.trim )
       return str.trim();
     else
       return str.replace( /^\s+|\s+$/g, "" );
@@ -166,7 +199,9 @@ define(function()
               }
               this._stack.pop();
             }
-            parsed += instance.render( this._capture );
+            var rendered = instance.render( this._capture );
+            if ( rendered )
+              parsed += rendered;
             if ( instance.close )
               this._capture = null;
             i += sub.length + 2;
