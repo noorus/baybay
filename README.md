@@ -1,7 +1,7 @@
 baybay(ˈbeɪbeɪ)
 ===============
 
-...is a BBCode parser in JS.
+...is a BBCode parser in JS, returning HTML output.
 
 ### Why..?
 
@@ -12,7 +12,7 @@ So here we are. One loop, a stack and a couple string utils.
 
 ### Usage
 
-Baybay is an [AMD](http://en.wikipedia.org/wiki/Asynchronous_module_definition) module and does not depend on anything.  
+Baybay is a small [UMD](https://github.com/umdjs/umd) module and does not depend on anything.  
 Baybay does its best to be *idiot-proof*, and will never generate invalid HTML.
 
     var bb = require( "baybay" );
