@@ -3,22 +3,44 @@
  * https://github.com/noorus/baybay
  * Licensed under the MIT license.
 */
-define(function()
+
+( function( root, factory )
+{
+  if ( typeof define === "function" && define.amd )
+  {
+    // AMD
+    define( ["exports"], factory );
+  }
+  else if ( typeof exports === "object" )
+  {
+    // CommonJS
+    factory( exports );
+  }
+  else
+  {
+    // Browser
+    factory( ( root.baybay = {} ) );
+  }
+}
+( this, function( exports )
 {
   function BBCodeParseError( message )
   {
     this.message = message;
   }
+
   function BBTagInstance( tag, close, arguments )
   {
     this.tag = tag;
     this.close = close;
     this.args = arguments;
   }
+
   BBTagInstance.prototype.render = function( capture )
   {
     return this.tag.render( this.close, capture, this.args );
   };
+
   function BBSimpleTag( bb, tag )
   {
     this._bb = bb;
@@ -29,6 +51,7 @@ define(function()
       return "<" + ( close ? "/" : "" ) + this.tag + ">";
     };
   }
+
   function BBImageTag( bb )
   {
     this._bb = bb;
@@ -44,6 +67,7 @@ define(function()
       return "<img src=\"" + capture + "\">";
     };
   }
+
   function BBColorTag( bb )
   {
     this._bb = bb;
@@ -61,6 +85,7 @@ define(function()
       return "<span style=\"color: " + color + ";\">";
     }
   }
+
   function BBCode()
   {
     this._stack = [];
@@ -70,7 +95,7 @@ define(function()
       new BBSimpleTag( this, "b" ),
       // Enables the [i] tag for italics
       new BBSimpleTag( this, "i" ),
-      // Enabled the [u] tag for underlining
+      // Enables the [u] tag for underlining
       new BBSimpleTag( this, "u" ),
       // Enables the [img] tag for image linking
       new BBImageTag( this ),
@@ -78,6 +103,7 @@ define(function()
       new BBColorTag( this )
     ];
   }
+
   BBCode.prototype.sanitizeColorArgument = function( color )
   {
     color = this.trim( color ).toLowerCase();
@@ -93,6 +119,7 @@ define(function()
       return color;
     return null;
   };
+
   BBCode.prototype.sanitizeURLArgument = function( url )
   {
     try {
@@ -104,6 +131,7 @@ define(function()
       return null;
     }
   };
+
   BBCode.prototype.inArray = function( arr, needle )
   {
     // Array.indexOf does not exist in IE8
@@ -117,6 +145,7 @@ define(function()
       return false;
     }
   };
+
   BBCode.prototype.trim = function( str )
   {
     // String.trim does not exist in IE8 or Safari 4
@@ -125,6 +154,7 @@ define(function()
     else
       return str.replace( /^\s+|\s+$/g, "" );
   };
+
   BBCode.prototype.parseTag = function( content )
   {
     if ( !content )
@@ -148,6 +178,7 @@ define(function()
     }
     return null;
   };
+
   BBCode.prototype.parse = function( content )
   {
     var parsed = "";
@@ -224,5 +255,16 @@ define(function()
     }
     return parsed;
   };
-  return BBCode;
-});
+
+  var simpleInstance;
+
+  exports.create = function()
+  {
+    return new BBCode();
+  };
+  exports.parse = function( str )
+  {
+    simpleInstance = simpleInstance || new BBCode();
+    return simpleInstance.parse( str );
+  };
+}));
