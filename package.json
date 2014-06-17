@@ -1,10 +1,24 @@
 {
   "name": "baybay",
   "version": "0.1.1",
-  "description": "A lightweight BBCode parser.",
-  "keywords": "bbcode parser",
+  "description": "lightweight BBCode parser",
+  "keywords": ["bbcode","parser"],
+  "author": {
+    "name": "Noora",
+    "email": "noora@ankea.net",
+    "url": "https://www.npmjs.org/~noorus"
+  },
   "license": "MIT",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noorus/baybay.git"
+  },
+  "private": false,
+  "main": "./baybay.js",
+  "files": ["Gruntfile.js"],
+  "scripts": {
+    "build": "grunt uglify"
+  },
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.5",

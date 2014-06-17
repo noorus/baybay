@@ -1,9 +1,3 @@
-/*
- * Baybay.js
- * https://github.com/noorus/baybay
- * Licensed under the MIT license.
-*/
-
 ( function( root, factory )
 {
   if ( typeof define === "function" && define.amd )
