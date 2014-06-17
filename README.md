@@ -1,7 +1,7 @@
-baybay(ˈbeɪbeɪ)
-===============
+# baybay(ˈbeɪbeɪ)
 
-...is a BBCode parser in JS, returning HTML output.
+[![NPM version](https://badge.fury.io/js/baybay.png)](http://badge.fury.io/js/baybay)  
+...is a BBCode parser in JS, returning HTML output.  
 
 ### Why..?
 
@@ -28,7 +28,7 @@ This example gives you:
 ### Installation
 
 Through Node Package Manager: `npm install baybay`  
-Or `git clone https://github.com/noorus/baybay.git`
+Or directly through Git: `git clone https://github.com/noorus/baybay.git`
 
 ### Building
 
