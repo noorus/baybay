@@ -25,6 +25,16 @@ This example gives you:
     <b>[<i>dumb []t<b>e</b>xt[x] <span style="color: red;">and an</span>
     <img src="http://localhost/image.png"></i></b>
 
+### Installation
+
+Through Node Package Manager: `npm install baybay`  
+Or `git clone https://github.com/noorus/baybay.git`
+
+### Building
+
+When using baybay in the browser, you might want to build the minified version `baybay.min.js`.  
+To do this, call `grunt uglify`.
+
 ### License
 
 Baybay is licensed under the MIT license.  
