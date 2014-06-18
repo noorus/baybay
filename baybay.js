@@ -100,7 +100,7 @@
 
   BBCode.prototype.sanitizeColorArgument = function( color )
   {
-    color = this.trim( color ).toLowerCase();
+    color = color.trim().toLowerCase();
     if ( /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i.test( color ) )
       return color;
     // http://www.w3.org/TR/CSS21/syndata.html#color-units
@@ -109,7 +109,7 @@
       "yellow", "olive", "lime", "green", "aqua", "teal",
       "blue", "navy", "fuchsia", "purple", "orange"
     ];
-    if ( this.inArray( colors, color ) )
+    if ( colors.indexOf( color ) != -1 )
       return color;
     return null;
   };
@@ -117,8 +117,7 @@
   BBCode.prototype.sanitizeURLArgument = function( url )
   {
     try {
-      url = this.trim( url );
-      url = encodeURI( url );
+      url = encodeURI( url.trim() );
       url = url.replace( /%5B/g, "[" ).replace( /%5D/g, "]" );
       return url;
     } catch ( e ) {
@@ -126,40 +125,17 @@
     }
   };
 
-  BBCode.prototype.inArray = function( arr, needle )
-  {
-    // Array.indexOf does not exist in IE8
-    if ( Array.prototype.indexOf )
-      return ( arr.indexOf( needle ) != -1 );
-    else
-    {
-      for ( var i = 0; i < arr.length; i++ )
-        if ( arr[i] == needle )
-          return true;
-      return false;
-    }
-  };
-
-  BBCode.prototype.trim = function( str )
-  {
-    // String.trim does not exist in IE8 or Safari 4
-    if ( String.prototype.trim )
-      return str.trim();
-    else
-      return str.replace( /^\s+|\s+$/g, "" );
-  };
-
   BBCode.prototype.parseTag = function( content )
   {
     if ( !content )
       return null;
-    content = this.trim( content );
+    content = content.trim();
     var close = ( content[0] == "/" );
     if ( close )
       content = content.substr( 1 );
     content = content.split( " " );
     for ( var i = 0; i < content.length; i++ )
-      content[i] = ( this.trim( content[i] ) ).split( "=" );
+      content[i] = ( content[i].trim() ).split( "=" );
     if ( !content[0] || !content[0][0] )
       return null;
     for ( var i = 0; i < this._tags.length; i++ )
