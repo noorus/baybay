@@ -1,6 +1,6 @@
 {
   "name": "baybay",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "lightweight BBCode parser",
   "keywords": [
     "bbcode",
@@ -30,7 +30,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "amdefine": "^0.1.0"
+    "amdefine": "0.1.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
