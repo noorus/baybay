@@ -1,6 +1,7 @@
 # baybay(ˈbeɪbeɪ)
 
-[![NPM version](https://badge.fury.io/js/baybay.png)](http://badge.fury.io/js/baybay)  
+[![NPM version](https://badge.fury.io/js/baybay.png)](http://badge.fury.io/js/baybay)
+[![Build Status](https://travis-ci.org/noorus/baybay.svg?branch=master)](https://travis-ci.org/noorus/baybay)  
 ...is a BBCode parser in JS, returning HTML output.  
 
 ### Why..?
