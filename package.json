@@ -1,6 +1,6 @@
 {
   "name": "baybay",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "lightweight BBCode parser",
   "keywords": [
     "bbcode",
@@ -22,10 +22,12 @@
     "Gruntfile.js",
     "LICENSE",
     "README.md",
-    "baybay.js"
+    "baybay.js",
+    "test"
   ],
   "scripts": {
-    "build": "grunt uglify"
+    "build": "grunt uglify",
+    "test": "grunt test"
   },
   "dependencies": {
     "amdefine": "^0.1.0"
