@@ -14,10 +14,26 @@ module.exports = function( grunt )
           "baybay.min.js": ["baybay.js"]
         }
       }
+    },
+    mochaTest: {
+      uncompressed: {
+        options: {
+          reporter: "spec"
+        },
+        src: ["test/uncompressed.js"]
+      },
+      compressed: {
+        options: {
+          reporter: "spec"
+        },
+        src: ["test/compressed.js"]
+      }
     }
   });
 
   grunt.loadNpmTasks( "grunt-contrib-uglify" );
+  grunt.loadNpmTasks( "grunt-mocha-test" );
 
-  grunt.registerTask( "default", ["uglify"] );
+  grunt.registerTask( "default", ["mochaTest:uncompressed","uglify","mochaTest:compressed"] );
+  grunt.registerTask( "test", ["mochaTest"] );
 };
