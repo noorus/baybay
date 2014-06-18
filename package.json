@@ -1,8 +1,11 @@
 {
   "name": "baybay",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "lightweight BBCode parser",
-  "keywords": ["bbcode","parser"],
+  "keywords": [
+    "bbcode",
+    "parser"
+  ],
   "author": {
     "name": "Noora",
     "email": "noora@ankea.net",
@@ -15,13 +18,22 @@
   },
   "private": false,
   "main": "./baybay.js",
-  "files": ["Gruntfile.js","LICENSE","README.md","baybay.js"],
+  "files": [
+    "Gruntfile.js",
+    "LICENSE",
+    "README.md",
+    "baybay.js"
+  ],
   "scripts": {
     "build": "grunt uglify"
   },
-  "dependencies": {},
+  "dependencies": {
+    "amdefine": "^0.1.0"
+  },
   "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-contrib-uglify": "~0.5.0"
+    "grunt": "^0.4.5",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-mocha-test": "^0.11.0",
+    "mocha": "^1.20.1"
   }
 }

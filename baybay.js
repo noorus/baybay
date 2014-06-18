@@ -73,7 +73,8 @@
         return "</span>";
       if ( !arguments[0] || !arguments[0][1] )
         return "<span>";
-      var color = this._bb.sanitizeColorArgument( arguments[0][1] );
+      var arg = arguments[0][1].replace( /\"/g, "" );
+      var color = this._bb.sanitizeColorArgument( arg );
       if ( !color )
         return "<span>";
       return "<span style=\"color: " + color + ";\">";
